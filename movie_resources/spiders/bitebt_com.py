@@ -11,6 +11,9 @@ class BiteBt(scrapy.Spider):
     ]
 
     def parse(self, response):
+        """
+        只要第一页，后面的页不要了
+        """
         for href in set(response.css('a::attr(href)').re(r'thread-\d+-1-1\.html')):
             url = response.urljoin(href)
             yield {
@@ -23,10 +26,11 @@ class BiteBt(scrapy.Spider):
         yield {
             'type': 'movie',
             'thread_url': thread_url,
-            'subject': response.css('#thread_subject::text').extract_first(),
+            'subject': response.css('#thread_subject::text').extract_first().strip(),
             'bt': response.urljoin(response.css('a[href*="mod=attachment"]::attr(href)').extract_first()),
             'imgs': response.css('#postlist div:first-of-type img[lazyloadthumb]::attr(file)').extract(),
             'douban': response.css('a[href*="movie.douban.com"]::attr(href)').extract_first(),
         }
-            
-            
+        # TODO: item pipeline & media pipeline
+        # https://doc.scrapy.org/en/1.2/topics/item-pipeline.html
+        # https://doc.scrapy.org/en/1.2/topics/media-pipeline.html
