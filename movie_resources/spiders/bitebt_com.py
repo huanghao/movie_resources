@@ -1,3 +1,4 @@
+#coding: utf8
 from functools import partial
 import scrapy
 
@@ -23,12 +24,14 @@ class BiteBt(scrapy.Spider):
             yield scrapy.Request(url, callback=partial(self.parse_thread, url))
 
     def parse_thread(self, thread_url, response):
+        poster = response.urljoin(response.css('a[href*="mod=attachment"]::attr(href)').extract_first())
+        shots = response.css('#postlist div:first-of-type img[lazyloadthumb]::attr(file)').extract()
         yield {
             'type': 'movie',
             'thread_url': thread_url,
             'subject': response.css('#thread_subject::text').extract_first().strip(),
-            'bt': response.urljoin(response.css('a[href*="mod=attachment"]::attr(href)').extract_first()),
-            'imgs': response.css('#postlist div:first-of-type img[lazyloadthumb]::attr(file)').extract(),
+            'file_urls': [poster],
+            'image_urls': shots,
             'douban': response.css('a[href*="movie.douban.com"]::attr(href)').extract_first(),
         }
         # TODO: item pipeline & media pipeline

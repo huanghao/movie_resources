@@ -67,6 +67,13 @@ ROBOTSTXT_OBEY = True
 #ITEM_PIPELINES = {
 #    'movie_resources.pipelines.SomePipeline': 300,
 #}
+ITEM_PIPELINES = {
+    'scrapy.pipelines.images.ImagesPipeline': 1,
+    'scrapy.pipelines.files.FilesPipeline': 1,
+}
+
+import os
+IMAGES_STORE = FILES_STORE = os.path.expanduser('~/Downloads/spider')
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
